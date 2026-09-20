@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/industry-7b7310f1-3001-441c-bb5d-53cba44ebaae/styles.css">
+<script src="_ds/industry-7b7310f1-3001-441c-bb5d-53cba44ebaae/_ds_bundle.js"></script>
+<script src="./image-slot.js"></script>
+<style>
+@keyframes tfspin { to { transform: rotate(360deg); } }
+@keyframes tfpulse { 0%,100% { opacity: .35 } 50% { opacity: 1 } }
+body { margin: 0; }
+a { color: #1b4b8f; }
+a:hover { color: #f4711a; }
+</style>
+</helmet>
+<div style="--color-accent:#1b4b8f;--color-accent-100:#e9f0fa;--color-accent-200:#cfe0f3;--color-accent-600:#163d76;--color-accent-700:#12305c;--color-accent-800:#0e2646;--color-accent-2:#f4711a;--color-accent-2-100:#fdeee1;--color-accent-2-800:#7a3606;min-height:100vh;display:flex;flex-direction:column;background:#f2f2f3;color:#1d1f20;font-family:var(--font-body);font-size:16px">
+
+  <header style="display:flex;align-items:center;gap:20px;padding:16px 34px;background:#14305c;color:#fff;position:sticky;top:0;z-index:20">
+    <button onClick="{{ goHome }}" style="background:none;border:0;padding:0;cursor:pointer;display:block;margin-right:auto">
+      <img src="trackflow-logo-dark.png" alt="TrackFlow" style="height:38px;width:auto">
+    </button>
+    <nav style="display:flex;align-items:center;gap:6px">
+      <button onClick="{{ goHome }}" style="font-family:var(--font-heading);font-weight:600;font-size:15px;letter-spacing:.02em;background:none;border:1px solid transparent;padding:8px 14px;cursor:pointer;color:#fff" style-hover="background:rgba(255,255,255,.12)">Rastrear</button>
+      <sc-if value="{{ loggedIn }}" hint-placeholder-val="{{ false }}">
+      <div style="position:relative" ref="{{ opsRef }}">
+        <button onClick="{{ toggleOps }}" style="font-family:var(--font-heading);font-weight:600;font-size:15px;letter-spacing:.02em;background:none;border:1px solid transparent;padding:8px 14px;cursor:pointer;color:#fff;display:inline-flex;align-items:center;gap:7px" style-hover="background:rgba(255,255,255,.12)">
+          Operaciones
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"></path></svg>
+        </button>
+        <sc-if value="{{ opsOpen }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;top:calc(100% + 6px);left:0;min-width:210px;background:#f7f7f8;border:1px solid rgba(29,31,32,.3);box-shadow:var(--shadow-md);z-index:40;display:flex;flex-direction:column">
+            <button onClick="{{ goNuevo }}" style="text-align:left;padding:11px 14px;background:none;border:0;cursor:pointer;font:inherit;font-size:14px;color:#1d1f20" style-hover="background:#e9f0fa">Registrar envío</button>
+            <button onClick="{{ goEvento }}" style="text-align:left;padding:11px 14px;background:none;border:0;border-top:1px solid rgba(29,31,32,.14);cursor:pointer;font:inherit;font-size:14px;color:#1d1f20" style-hover="background:#e9f0fa">Registrar evento</button>
+          </div>
+        </sc-if>
+      </div>
+      </sc-if>
+      <sc-if value="{{ isAdmin }}" hint-placeholder-val="{{ false }}">
+        <button onClick="{{ goAdmin }}" style="font-family:var(--font-heading);font-weight:600;font-size:15px;letter-spacing:.02em;background:none;border:1px solid transparent;padding:8px 14px;cursor:pointer;color:#fff" style-hover="background:rgba(255,255,255,.12)">Admin</button>
+      </sc-if>
+    </nav>
+    <sc-if value="{{ loggedIn }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;align-items:center;gap:12px;padding-left:16px;border-left:1px solid rgba(255,255,255,.22)">
+        <span style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.65)">{{ rolesLabel }}</span>
+        <button onClick="{{ logout }}" class="btn" style="border-color:rgba(255,255,255,.4);color:#fff;padding:9px 18px" style-hover="background:rgba(255,255,255,.12)">Salir</button>
+      </div>
+    </sc-if>
+    <sc-if value="{{ loggedOut }}" hint-placeholder-val="{{ true }}">
+      <button onClick="{{ goLogin }}" class="btn" style="margin-left:6px;background:#f4711a;border-color:#f4711a;color:#fff;padding:11px 26px;font-size:15px" style-hover="background:#d9600f;border-color:#d9600f">Ingresar</button>
+    </sc-if>
+  </header>
+
+  <!-- ══ HOME / RASTREO ══ -->
+  <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+    <section style="position:relative;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:92px 28px 104px;background:#14305c;overflow:hidden">
+      <div style="position:absolute;inset:0;z-index:0"><image-slot id="tf-hero" shape="rect" src="uploads/Gemini_Generated_Image_kvp4ylkvp4ylkvp4.jpg" placeholder="Suelta aquí la imagen del hero"></image-slot></div>
+      <div style="position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(11,26,51,.5),rgba(11,26,51,.72));pointer-events:none"></div>
+      <div style="position:relative;z-index:2;width:100%;max-width:880px;display:flex;flex-direction:column;align-items:center">
+        <div style="width:60px;height:60px;border:1px solid rgba(255,255,255,.45);display:grid;place-items:center;margin-bottom:26px">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#f4711a" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0"></path><path d="m3.3 7 8.7 5 8.7-5"></path><path d="M12 22V12"></path><circle cx="18.5" cy="15.5" r="2.5"></circle><path d="M20.27 17.27 22 19"></path></svg>
+        </div>
+        <h1 style="font-size:66px;margin:0 0 12px;letter-spacing:-.02em;color:#fff;line-height:1.02">Rastrea tu envío</h1>
+        <p style="max-width:600px;font-size:19px;color:rgba(255,255,255,.88);margin-bottom:36px;text-wrap:pretty">Conoce la ubicación exacta de tu paquete en tiempo real con tu número de guía.</p>
+
+        <form onSubmit="{{ doSearch }}" style="width:100%;max-width:640px;position:relative">
+          <div class="blueprint" style="display:flex;gap:0;background:#fff;border-color:rgba(255,255,255,.55);padding:8px">
+            
+            <input class="input" name="tn" placeholder="TFA1B2C3D4E5F6" autoComplete="off" spellCheck="{{ false }}" style="border:0;background:transparent;min-height:58px;font-size:22px;letter-spacing:.16em;font-family:var(--font-heading);font-variant-numeric:tabular-nums;text-transform:uppercase;padding:0 18px">
+            <button type="submit" class="btn btn-primary" style="min-height:60px;padding:0 26px;font-size:15px;letter-spacing:.06em;text-transform:uppercase;border-radius:0;gap:8px;background:#f4711a;border-color:#f4711a;color:#fff" style-hover="background:#d9600f;border-color:#d9600f" style-active="background:#bd5209;border-color:#bd5209">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+              Rastrear
+            </button>
+          </div>
+          <sc-if value="{{ qError }}" hint-placeholder-val="{{ false }}">
+            <p style="margin-top:12px;padding:10px 14px;border:1px solid #f4711a;background:#fdeee1;color:#7a3606;font-size:13px;text-align:left">{{ qError }}</p>
+          </sc-if>
+        </form>
+      </div>
+    </section>
+  </sc-if>
+
+  <!-- ══ LOGIN ══ -->
+  <sc-if value="{{ isLogin }}" hint-placeholder-val="{{ false }}">
+    <section style="position:relative;flex:1;display:flex;align-items:center;background:#0d2347;overflow:hidden">
+      <img src="uploads/ChatGPT Image 18 sept 2026, 17_45_06.png" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+      <div style="position:absolute;inset:0;background:linear-gradient(100deg,rgba(11,29,60,.97) 0%,rgba(11,29,60,.9) 38%,rgba(11,29,60,.35) 62%,rgba(11,29,60,.15) 100%);pointer-events:none"></div>
+      <div style="position:relative;width:100%;max-width:1200px;margin:0 auto;padding:72px 34px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,420px);gap:64px;align-items:center">
+
+        <div style="color:#fff">
+          <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px">
+            <span style="width:52px;height:3px;background:#f4711a;display:block"></span>
+            <span style="font-family:var(--font-heading);font-size:14px;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.85)">Logística en movimiento</span>
+          </div>
+          <h1 style="font-size:clamp(40px,4.6vw,62px);line-height:1.03;margin:0 0 18px;color:#fff;letter-spacing:-.02em;max-width:13ch">Conectamos destinos <span style="color:#f4711a">hacia un mejor mañana</span></h1>
+          <p style="font-size:19px;color:rgba(255,255,255,.82);max-width:34ch;margin:0 0 40px">Tecnología y confianza para que tus envíos lleguen más lejos.</p>
+          <div style="display:flex;gap:0;align-items:stretch">
+            <div style="display:flex;flex-direction:column;align-items:center;gap:10px;padding-right:30px">
+              <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"></path><path d="m3.3 7 8.7 5 8.7-5"></path><path d="M12 22V12"></path></svg>
+              <span style="font-size:14px;color:rgba(255,255,255,.85)">Rápido</span>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:10px;padding:0 30px;border-left:1px solid rgba(255,255,255,.25)">
+              <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg>
+              <span style="font-size:14px;color:rgba(255,255,255,.85)">Seguro</span>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:10px;padding-left:30px;border-left:1px solid rgba(255,255,255,.25)">
+              <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v16a2 2 0 0 0 2 2h16"></path><path d="M7 16v-5"></path><path d="M12 16V8"></path><path d="M17 16v-3"></path></svg>
+              <span style="font-size:14px;color:rgba(255,255,255,.85)">Confiable</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="background:#f7f7f8;padding:38px 34px;box-shadow:0 24px 60px rgba(4,14,32,.45)">
+          <h2 style="margin:0 0 8px;font-size:38px">Ingresar</h2>
+          <p style="color:rgba(29,31,32,.65);font-size:15px;margin-bottom:26px">Acceso para personal de TrackFlow. Tu rol se determina con tus credenciales.</p>
+          <form onSubmit="{{ submitLogin }}" ref="{{ loginFormRef }}" noValidate="{{ true }}">
+            <div style="display:grid;gap:18px">
+              <div class="field">
+                <label style="font-size:13px">Usuario</label>
+                <div style="position:relative;display:flex;align-items:center">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(29,31,32,.45)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="position:absolute;left:14px;pointer-events:none"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                  <input class="input" name="usuario" autoComplete="username" placeholder="Ingresa tu usuario" style="min-height:52px;padding-left:44px;font-size:15px;background:#fff">
+                </div>
+              </div>
+              <div class="field">
+                <label style="font-size:13px">Clave</label>
+                <div style="position:relative;display:flex;align-items:center">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(29,31,32,.45)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="position:absolute;left:14px;pointer-events:none"><rect width="18" height="11" x="3" y="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                  <input class="input" name="clave" type="{{ claveType }}" autoComplete="current-password" placeholder="Ingresa tu contraseña" style="min-height:52px;padding-left:44px;padding-right:46px;font-size:15px;background:#fff">
+                  <button type="button" onClick="{{ toggleClave }}" aria-label="Mostrar u ocultar la clave" style="position:absolute;right:8px;width:34px;height:34px;display:grid;place-items:center;background:none;border:0;cursor:pointer;color:rgba(29,31,32,.5)" style-hover="color:#f4711a">
+                    <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                  </button>
+                </div>
+              </div>
+              <button type="submit" class="btn" disabled="{{ loginSubmitting }}" style="min-height:54px;width:100%;text-transform:uppercase;letter-spacing:.1em;font-size:16px;background:#f4711a;border-color:#f4711a;color:#fff" style-hover="background:#d9600f;border-color:#d9600f">{{ loginLabel }}</button>
+            </div>
+          </form>
+          <sc-if value="{{ loginError }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:14px 16px;margin-top:20px;border:1px solid #f4711a;background:#fdeee1">
+              <div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#7a3606;margin-bottom:4px">{{ loginErrorTitle }}</div>
+              <p style="margin:0;font-size:14px;color:#7a3606">{{ loginError }}</p>
+            </div>
+          </sc-if>
+        </div>
+      </div>
+    </section>
+  </sc-if>
+
+  <sc-if value="{{ isInterior }}" hint-placeholder-val="{{ false }}">
+  <main style="flex:1;width:100%;max-width:1100px;margin:0 auto;padding:44px 28px 72px">
+
+    <!-- ══ RESULTADO ══ -->
+    <sc-if value="{{ isResult }}" hint-placeholder-val="{{ false }}">
+      <section>
+        <form onSubmit="{{ doSearch }}" style="margin-bottom:34px">
+          <div class="blueprint" style="display:flex;background:#e9e9ea;max-width:560px">
+            <input class="input" name="tn" defaultValue="{{ q }}" placeholder="TFA1B2C3D4E5F6" autoComplete="off" style="border:0;background:transparent;min-height:46px;font-size:18px;letter-spacing:.14em;font-family:var(--font-heading);font-variant-numeric:tabular-nums;text-transform:uppercase;padding:0 14px">
+            <button type="submit" class="btn btn-primary" style="min-height:46px;padding:0 20px;text-transform:uppercase;letter-spacing:.06em;border-radius:0;background:#f4711a;border-color:#f4711a;color:#fff" style-hover="background:#d9600f;border-color:#d9600f">Rastrear</button>
+          </div>
+          <sc-if value="{{ qError }}" hint-placeholder-val="{{ false }}">
+            <p style="margin-top:10px;font-size:13px;color:#7a3606">{{ qError }}</p>
+          </sc-if>
+        </form>
+
+        <sc-if value="{{ loading }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;align-items:center;gap:12px;color:rgba(29,31,32,.6);font-size:14px">
+            <span style="width:16px;height:16px;border:2px solid rgba(29,31,32,.2);border-top-color:#1b4b8f;border-radius:50%;animation:tfspin .7s linear infinite;display:block"></span>
+            Consultando el envío…
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ notFound }}" hint-placeholder-val="{{ false }}">
+          <div class="blueprint" style="padding:34px 30px;max-width:620px">
+            <h3 style="margin:0 0 6px">No encontramos ningún envío con ese número</h3>
+            <p style="margin:0 0 4px;color:rgba(29,31,32,.7);font-size:14px">Verifica que esté bien escrito. La guía tiene la forma <strong>TF</strong> seguida de 12 caracteres, por ejemplo TFA1B2C3D4E5F6.</p>
+            <p style="margin:0;font-size:13px;color:rgba(29,31,32,.5)">Consultaste: {{ q }}</p>
+            <code style="display:block;margin-top:10px;font-size:11px;color:rgba(29,31,32,.45)">{{ diag }}</code>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ netError }}" hint-placeholder-val="{{ false }}">
+          <div class="blueprint" style="padding:22px;max-width:620px;border-color:#f4711a;background:#fdeee1">
+            <h4 style="margin:0 0 4px;color:#7a3606">No pudimos contactar el servicio</h4>
+            <p style="margin:0 0 12px;font-size:13px;color:#7a3606">{{ netError }}</p>
+            <button onClick="{{ retry }}" class="btn btn-secondary">Reintentar</button>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ hasTracking }}" hint-placeholder-val="{{ false }}">
+          <div style="display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:34px;align-items:start">
+            <div class="blueprint" style="padding:24px 22px">
+              <div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:rgba(29,31,32,.5);margin-bottom:4px">Número de guía</div>
+              <div style="font-family:var(--font-heading);font-size:30px;letter-spacing:.1em;font-variant-numeric:tabular-nums;margin-bottom:16px">{{ t_tn }}</div>
+              <span style="{{ estadoStyle }}">{{ t_estado }}</span>
+              <dl style="display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 16px;margin:22px 0 0;font-size:13px">
+                <dt style="color:rgba(29,31,32,.5)">Destino</dt><dd style="margin:0">{{ t_destino }}</dd>
+                <dt style="color:rgba(29,31,32,.5)">Registrado</dt><dd style="margin:0">{{ t_registrado }}</dd>
+                <dt style="color:rgba(29,31,32,.5)">Último punto</dt><dd style="margin:0">{{ t_ultimoPunto }}</dd>
+                <dt style="color:rgba(29,31,32,.5)">Último movimiento</dt><dd style="margin:0">{{ t_ultimoMov }}</dd>
+              </dl>
+            </div>
+
+            <div>
+              <h3 style="margin:0 0 18px;font-size:20px;letter-spacing:.04em;text-transform:uppercase">Línea de tiempo</h3>
+              <sc-if value="{{ eventsLoading }}" hint-placeholder-val="{{ false }}">
+                <p style="font-size:13px;color:rgba(29,31,32,.5);animation:tfpulse 1.2s infinite">Cargando movimientos…</p>
+              </sc-if>
+              <sc-if value="{{ noEvents }}" hint-placeholder-val="{{ false }}">
+                <div class="blueprint" style="padding:20px">
+                  <p style="margin:0;font-size:14px;color:rgba(29,31,32,.7)">Este envío aún no tiene movimientos reportados. Está registrado y esperando su primer paso por un centro de distribución.</p>
+                </div>
+              </sc-if>
+              <sc-for list="{{ timeline }}" as="ev" hint-placeholder-count="3">
+                <div style="display:grid;grid-template-columns:34px minmax(0,1fr);gap:16px">
+                  <div style="display:flex;flex-direction:column;align-items:center">
+                    <span style="{{ ev.dotStyle }}">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <sc-if value="{{ ev.isReceived }}" hint-placeholder-val="{{ true }}"><g><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"></path><path d="m3.3 7 8.7 5 8.7-5"></path><path d="M12 22V12"></path></g></sc-if>
+                        <sc-if value="{{ ev.isDispatched }}" hint-placeholder-val="{{ false }}"><g><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></g></sc-if>
+                        <sc-if value="{{ ev.isArrived }}" hint-placeholder-val="{{ false }}"><g><path d="M3 21h18"></path><path d="M5 21V7l7-4 7 4v14"></path><path d="M9 21v-6h6v6"></path></g></sc-if>
+                        <sc-if value="{{ ev.isOut }}" hint-placeholder-val="{{ false }}"><g><path d="M10 17h4V5H2v12h3"></path><path d="M20 17h2v-3.34a4 4 0 0 0-1.17-2.83L19 9h-5v8h1"></path><circle cx="7.5" cy="17.5" r="2.5"></circle><circle cx="17.5" cy="17.5" r="2.5"></circle></g></sc-if>
+                        <sc-if value="{{ ev.isDelivered }}" hint-placeholder-val="{{ false }}"><g><path d="M20 6 9 17l-5-5"></path></g></sc-if>
+                      </svg>
+                    </span>
+                    <span style="flex:1;width:1px;background:rgba(29,31,32,.18);min-height:14px"></span>
+                  </div>
+                  <div style="padding-bottom:22px">
+                    <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap">
+                      <h4 style="margin:0;font-size:21px;letter-spacing:.02em">{{ ev.tipoLabel }}</h4>
+                      <span style="font-size:12px;color:rgba(29,31,32,.5);font-variant-numeric:tabular-nums">{{ ev.fecha }}</span>
+                    </div>
+                    <div style="font-size:15px;margin-top:3px;color:rgba(29,31,32,.72)">{{ ev.punto }}</div>
+                    <sc-if value="{{ ev.obs }}" hint-placeholder-val="{{ false }}">
+                      <p style="margin:6px 0 0;font-size:13px;color:rgba(29,31,32,.65)">{{ ev.obs }}</p>
+                    </sc-if>
+                    <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+                      <span class="tag tag-neutral">Estado resultante: {{ ev.estadoLabel }}</span>
+                      <sc-if value="{{ ev.rezagado }}" hint-placeholder-val="{{ false }}">
+                        <span class="tag" style="background:#fdeee1;color:#7a3606">Reporte rezagado — no cambió el estado visible</span>
+                      </sc-if>
+                    </div>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+      </section>
+    </sc-if>
+
+    <!-- ══ REGISTRAR ENVÍO ══ -->
+    <sc-if value="{{ isNuevo }}" hint-placeholder-val="{{ false }}">
+      <section>
+        <div style="position:relative;margin:-44px -28px 30px;padding:44px 28px 34px;background-image:url('uploads/pasted-1789919018356-0.png');background-size:cover;background-position:right center;background-repeat:no-repeat;border-bottom:1px solid rgba(29,31,32,.16)">
+          <div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#1b4b8f;margin-bottom:6px">Operador · HU-01</div>
+          <h1 style="margin:0 0 6px">Registrar envío</h1>
+          <p style="color:rgba(29,31,32,.7);max-width:560px;margin:0">El número de guía lo genera TrackFlow al confirmar. Todos los campos son obligatorios.</p>
+        </div>
+
+        <sc-if value="{{ created }}" hint-placeholder-val="{{ false }}">
+          <div class="blueprint" style="padding:28px 26px;max-width:720px;margin-bottom:28px">
+            <div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#1b4b8f;margin-bottom:4px">202 Aceptado</div>
+            <h3 style="margin:0 0 14px">Solicitud recibida</h3>
+            <div style="display:flex;gap:26px;flex-wrap:wrap;align-items:flex-end">
+              <div>
+                <div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:rgba(29,31,32,.5)">Número de guía</div>
+                <div style="font-family:var(--font-heading);font-size:34px;letter-spacing:.1em;font-variant-numeric:tabular-nums">{{ c_tn }}</div>
+              </div>
+              <div style="font-size:13px;color:rgba(29,31,32,.7);padding-bottom:6px">
+                <div>{{ c_destinatario }} · {{ c_ciudad }}</div>
+                <div>{{ c_solicitado }}</div>
+              </div>
+            </div>
+            <div style="margin-top:18px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+              <span class="tag" style="background:#fdeee1;color:#7a3606">{{ c_procesamiento }}</span>
+              <span style="font-size:12px;color:rgba(29,31,32,.6)">{{ c_nota }}</span>
+            </div>
+            <div style="display:flex;gap:10px;margin-top:20px">
+              <button onClick="{{ verCreado }}" class="btn btn-primary" style="background:#f4711a;border-color:#f4711a;color:#fff" style-hover="background:#d9600f;border-color:#d9600f">Ver seguimiento</button>
+              <button onClick="{{ otroEnvio }}" class="btn btn-secondary">Registrar otro</button>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ showShipmentForm }}" hint-placeholder-val="{{ true }}">
+          <form onSubmit="{{ submitShipment }}" ref="{{ formRef }}" noValidate="{{ true }}">
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:30px">
+
+              <div class="blueprint" style="padding:22px 20px">
+                <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
+                  <span style="flex:none;color:#1b4b8f;display:grid;place-items:center">
+                    <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="10" r="3.4"></circle><path d="M5.6 19.3a7.6 7.6 0 0 1 12.8 0"></path></svg>
+                  </span>
+                  <div>
+                    <h4 style="margin:0;letter-spacing:.06em;text-transform:uppercase;font-size:15px">Remitente</h4>
+                    <div style="font-size:12px;color:rgba(29,31,32,.6)">Información de quien envía el paquete</div>
+                  </div>
+                </div>
+                <div style="display:grid;gap:14px">
+                  <div class="field"><label>Nombre completo <span style="color:#f4711a">*</span></label><input class="input" name="rem_nombre" placeholder="Ej. Juan Pérez García"></div>
+                  <div style="display:grid;grid-template-columns:120px minmax(0,1fr);gap:12px">
+                    <div class="field"><label>Tipo doc. <span style="color:#f4711a">*</span></label>
+                      <select class="input" name="rem_tipo" value="{{ remTipo }}" onChange="{{ onRemTipo }}">
+                        <option value="CC">CC</option><option value="CE">CE</option><option value="TI">TI</option><option value="PP">PP</option><option value="NIT">NIT</option>
+                      </select>
+                    </div>
+                    <div class="field"><label>Número de documento <span style="color:#f4711a">*</span></label><input class="input" name="rem_doc" inputMode="text" placeholder="Ej. 1234567890">
+                      <div style="font-size:11px;color:rgba(29,31,32,.55);margin-top:4px">{{ remHint }}</div>
+                    </div>
+                  </div>
+                  <div class="field"><label>Teléfono <span style="color:#f4711a">*</span></label>
+                    <div style="position:relative;display:flex;align-items:center">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="position:absolute;left:11px;pointer-events:none;color:rgba(29,31,32,.45)"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                      <input class="input" name="rem_tel" placeholder="Ej. 300 123 4567" style="padding-left:34px;width:100%">
+                    </div>
+                  </div>
+                  <div class="field"><label>Dirección de origen <span style="color:#f4711a">*</span></label>
+                    <div style="position:relative;display:flex;align-items:center">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="position:absolute;left:11px;pointer-events:none;color:rgba(29,31,32,.45)"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                      <input class="input" name="rem_dir" placeholder="Ej. Calle 45 # 12-30" style="padding-left:34px;width:100%">
+                    </div>
+                  </div>
+                  <div class="field" style="position:relative"><label>Ciudad de origen <span style="color:#f4711a">*</span></label>
+                    <input class="input" autoComplete="off" placeholder="Escribe para buscar…" value="{{ remCityText }}" onChange="{{ onRemCity }}" onFocus="{{ onRemFocus }}">
+                    <sc-if value="{{ remListOpen }}" hint-placeholder-val="{{ false }}">
+                      <ul style="position:absolute;z-index:10;top:100%;left:0;right:0;margin:2px 0 0;padding:0;list-style:none;background:#f7f7f8;border:1px solid rgba(29,31,32,.3);max-height:230px;overflow:auto;box-shadow:var(--shadow-md)">
+                        <sc-for list="{{ remCities }}" as="c" hint-placeholder-count="4">
+                          <li><button type="button" onClick="{{ c.pick }}" style="display:block;width:100%;text-align:left;padding:8px 12px;background:none;border:0;cursor:pointer;font:inherit;font-size:13px" style-hover="background:#e9f0fa">{{ c.etiqueta }}</button></li>
+                        </sc-for>
+                        <sc-if value="{{ remNoCities }}" hint-placeholder-val="{{ false }}">
+                          <li style="padding:8px 12px;font-size:13px;color:rgba(29,31,32,.55)">Sin coincidencias</li>
+                        </sc-if>
+                      </ul>
+                    </sc-if>
+                  </div>
+                </div>
+              </div>
+
+              <div class="blueprint" style="padding:22px 20px">
+                <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
+                  <span style="flex:none;color:#1b4b8f;display:grid;place-items:center">
+                    <svg width="34" height="34" viewBox="0 0 24 24" fill="currentColor"><clipPath id="tf-av-clip"><circle cx="12" cy="12" r="11"></circle></clipPath><circle cx="12" cy="12" r="11"></circle><g clip-path="url(#tf-av-clip)" fill="#f2f2f3"><circle cx="12" cy="9.4" r="3.7"></circle><path d="M12 14.2a8 8 0 0 1 8 8H4a8 8 0 0 1 8-8z"></path></g></svg>
+                  </span>
+                  <div>
+                    <h4 style="margin:0;letter-spacing:.06em;text-transform:uppercase;font-size:15px">Destinatario</h4>
+                    <div style="font-size:12px;color:rgba(29,31,32,.6)">Información de quien recibe el paquete</div>
+                  </div>
+                </div>
+                <div style="display:grid;gap:14px">
+                  <div class="field"><label>Nombre completo <span style="color:#f4711a">*</span></label><input class="input" name="des_nombre" placeholder="Ej. María López Torres"></div>
+                  <div style="display:grid;grid-template-columns:120px minmax(0,1fr);gap:12px">
+                    <div class="field"><label>Tipo doc. <span style="color:#f4711a">*</span></label>
+                      <select class="input" name="des_tipo" value="{{ desTipo }}" onChange="{{ onDesTipo }}">
+                        <option value="CC">CC</option><option value="CE">CE</option><option value="TI">TI</option><option value="PP">PP</option><option value="NIT">NIT</option>
+                      </select>
+                    </div>
+                    <div class="field"><label>Número de documento <span style="color:#f4711a">*</span></label><input class="input" name="des_doc" placeholder="Ej. 1234567890">
+                      <div style="font-size:11px;color:rgba(29,31,32,.55);margin-top:4px">{{ desHint }}</div>
+                    </div>
+                  </div>
+                  <div class="field"><label>Teléfono <span style="color:#f4711a">*</span></label>
+                    <div style="position:relative;display:flex;align-items:center">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="position:absolute;left:11px;pointer-events:none;color:rgba(29,31,32,.45)"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                      <input class="input" name="des_tel" placeholder="Ej. 300 123 4567" style="padding-left:34px;width:100%">
+                    </div>
+                  </div>
+                  <div class="field"><label>Dirección de destino <span style="color:#f4711a">*</span></label>
+                    <div style="position:relative;display:flex;align-items:center">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="position:absolute;left:11px;pointer-events:none;color:rgba(29,31,32,.45)"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                      <input class="input" name="des_dir" placeholder="Ej. Carrera 10 # 20-45" style="padding-left:34px;width:100%">
+                    </div>
+                  </div>
+                  <div class="field" style="position:relative"><label>Ciudad de destino <span style="color:#f4711a">*</span></label>
+                    <input class="input" autoComplete="off" placeholder="Escribe para buscar…" value="{{ desCityText }}" onChange="{{ onDesCity }}" onFocus="{{ onDesFocus }}">
+                    <sc-if value="{{ desListOpen }}" hint-placeholder-val="{{ false }}">
+                      <ul style="position:absolute;z-index:10;top:100%;left:0;right:0;margin:2px 0 0;padding:0;list-style:none;background:#f7f7f8;border:1px solid rgba(29,31,32,.3);max-height:230px;overflow:auto;box-shadow:var(--shadow-md)">
+                        <sc-for list="{{ desCities }}" as="c" hint-placeholder-count="4">
+                          <li><button type="button" onClick="{{ c.pick }}" style="display:block;width:100%;text-align:left;padding:8px 12px;background:none;border:0;cursor:pointer;font:inherit;font-size:13px" style-hover="background:#e9f0fa">{{ c.etiqueta }}</button></li>
+                        </sc-for>
+                        <sc-if value="{{ desNoCities }}" hint-placeholder-val="{{ false }}">
+                          <li style="padding:8px 12px;font-size:13px;color:rgba(29,31,32,.55)">Sin coincidencias</li>
+                        </sc-if>
+                      </ul>
+                    </sc-if>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="blueprint" style="padding:22px 20px;margin-top:30px">
+              <div class="field"><label>Descripción del contenido <span style="color:#f4711a">*</span></label><textarea class="input" name="descripcion" rows="3" placeholder="Ej. Caja con 2 pares de zapatos, 3 kg"></textarea></div>
+            </div>
+
+            <sc-if value="{{ shipError }}" hint-placeholder-val="{{ false }}">
+              <div class="blueprint" style="padding:18px;margin-top:22px;border-color:#f4711a;background:#fdeee1">
+                <div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#7a3606;margin-bottom:4px">{{ shipErrorTitle }}</div>
+                <p style="margin:0;font-size:14px;color:#7a3606">{{ shipError }}</p>
+                <ul style="margin:10px 0 0;padding-left:18px;font-size:13px;color:#7a3606">
+                  <sc-for list="{{ shipMissing }}" as="m" hint-placeholder-count="0">
+                    <li><strong>{{ m.campo }}</strong> — {{ m.mensaje }}</li>
+                  </sc-for>
+                </ul>
+              </div>
+            </sc-if>
+
+            <div style="display:flex;gap:12px;align-items:center;margin-top:26px">
+              <button type="submit" class="btn btn-primary" disabled="{{ submitting }}" style="min-height:44px;padding:0 24px;text-transform:uppercase;letter-spacing:.06em;background:#f4711a;border-color:#f4711a;color:#fff" style-hover="background:#d9600f;border-color:#d9600f">{{ submitLabel }}</button>
+              <span style="font-size:12px;color:rgba(29,31,32,.55)">El registro se procesa de forma asíncrona: la respuesta es 202, no una confirmación de escritura.</span>
+            </div>
+          </form>
+        </sc-if>
+      </section>
+    </sc-if>
+
+    <!-- ══ REGISTRAR EVENTO ══ -->
+    <sc-if value="{{ isEvento }}" hint-placeholder-val="{{ false }}">
+      <section>
+        <div style="position:relative;margin:-44px -28px 30px;padding:44px 28px 34px;background-image:url('uploads/pasted-1789919018356-0.png');background-size:cover;background-position:right center;background-repeat:no-repeat;border-bottom:1px solid rgba(29,31,32,.16)">
+          <div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#1b4b8f;margin-bottom:6px">Operador · HU-02</div>
+          <h1 style="margin:0 0 6px">Registrar evento logístico</h1>
+          <p style="color:rgba(29,31,32,.7);max-width:560px;margin:0">Un movimiento sobre un envío existente. No se edita ni se borra nada: corregir significa registrar un evento nuevo.</p>
+        </div>
+
+        <form onSubmit="{{ submitEvent }}" ref="{{ evFormRef }}" noValidate="{{ true }}" style="max-width:720px">
+          <div class="blueprint" style="padding:24px 22px;display:grid;gap:16px">
+            <div class="field"><label>Número de guía</label>
+              <input class="input" name="ev_tn" defaultValue="{{ evTnDefault }}" placeholder="TFA1B2C3D4E5F6" style="letter-spacing:.14em;text-transform:uppercase;font-family:var(--font-heading);font-variant-numeric:tabular-nums;font-size:18px">
+            </div>
+            <div class="field"><label>Tipo de evento</label>
+              <select class="input" name="ev_tipo">
+                <option value="RECEIVED_AT_CENTER">Recibido en centro</option>
+                <option value="DISPATCHED">Despachado</option>
+                <option value="ARRIVED_AT_DESTINATION_CENTER">Llegó a centro destino</option>
+                <option value="OUT_FOR_DELIVERY">Salió a reparto</option>
+                <option value="DELIVERED">Entregado</option>
+              </select>
+            </div>
+            <div class="field"><label>Punto</label><input class="input" name="ev_punto" placeholder="Centro de distribución Bogotá Norte"></div>
+            <div class="field"><label>Observaciones (opcional)</label><textarea class="input" name="ev_obs" rows="2"></textarea></div>
+
+            <div>
+              <label class="radio" style="gap:10px">
+                <input type="checkbox" checked="{{ useFecha }}" onChange="{{ toggleFecha }}">
+                <span class="dot" style="border-radius:0"></span>
+                <span>Indicar fecha y hora del movimiento</span>
+              </label>
+              <div style="font-size:12px;color:rgba(29,31,32,.55);margin-top:6px;margin-left:26px">Por defecto se asume que el movimiento acaba de ocurrir. Usa esto si el evento ocurrió antes y se está reportando tarde. Una fecha futura es rechazada.</div>
+              <sc-if value="{{ useFecha }}" hint-placeholder-val="{{ false }}">
+                <div style="margin-top:10px;margin-left:26px;max-width:260px">
+                  <input class="input" type="datetime-local" name="ev_fecha">
+                </div>
+              </sc-if>
+            </div>
+          </div>
+
+          <sc-if value="{{ evError }}" hint-placeholder-val="{{ false }}">
+            <div class="blueprint" style="padding:18px;margin-top:20px;border-color:#f4711a;background:#fdeee1">
+              <div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#7a3606;margin-bottom:4px">{{ evErrorTitle }}</div>
+              <p style="margin:0;font-size:14px;color:#7a3606">{{ evError }}</p>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ evOk }}" hint-placeholder-val="{{ false }}">
+            <div class="blueprint" style="padding:20px;margin-top:20px">
+              <div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:#1b4b8f;margin-bottom:4px">202 Aceptado</div>
+              <p style="margin:0 0 4px;font-size:14px">Movimiento encolado sobre <strong>{{ evOkTn }}</strong>.</p>
+              <p style="margin:0;font-size:13px;color:rgba(29,31,32,.6)">Si la fecha es anterior al último movimiento aplicado, queda en el historial pero el estado visible del envío no avanza.</p>
+              <button type="button" onClick="{{ verEvento }}" class="btn btn-secondary" style="margin-top:14px">Ver seguimiento</button>
+            </div>
+          </sc-if>
+
+          <div style="display:flex;gap:12px;align-items:center;margin-top:24px">
+            <button type="submit" class="btn btn-primary" disabled="{{ evSubmitting }}" style="min-height:44px;padding:0 24px;text-transform:uppercase;letter-spacing:.06em;background:#f4711a;border-color:#f4711a;color:#fff" style-hover="background:#d9600f;border-color:#d9600f">{{ evSubmitLabel }}</button>
+          </div>
+        </form>
+      </section>
+    </sc-if>
+
+    <!-- ══ ADMIN ══ -->
+    <sc-if value="{{ isAdminScreen }}" hint-placeholder-val="{{ false }}">
+      <section style="max-width:640px">
+        <div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#1b4b8f;margin-bottom:6px">Administración</div>
+        <h1 style="margin:0 0 6px">Reconstruir proyecciones</h1>
+        <p style="color:rgba(29,31,32,.65);margin-bottom:24px">Republica los envíos y eventos almacenados para reconstruir las vistas de lectura. No modifica datos de negocio.</p>
+        <div class="blueprint" style="padding:24px 22px">
+          <button onClick="{{ rebuild }}" class="btn btn-primary" disabled="{{ adminLoading }}" style="min-height:42px;padding:0 22px;text-transform:uppercase;letter-spacing:.06em;background:#f4711a;border-color:#f4711a;color:#fff" style-hover="background:#d9600f;border-color:#d9600f">{{ adminLabel }}</button>
+          <sc-if value="{{ adminResult }}" hint-placeholder-val="{{ false }}">
+            <dl style="display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 18px;margin:22px 0 0;font-size:14px">
+              <dt style="color:rgba(29,31,32,.5)">Envíos republicados</dt><dd style="margin:0;font-family:var(--font-heading);font-size:20px">{{ adminEnvios }}</dd>
+              <dt style="color:rgba(29,31,32,.5)">Eventos republicados</dt><dd style="margin:0;font-family:var(--font-heading);font-size:20px">{{ adminEventos }}</dd>
+            </dl>
+          </sc-if>
+          <sc-if value="{{ adminError }}" hint-placeholder-val="{{ false }}">
+            <p style="margin:18px 0 0;font-size:14px;color:#7a3606">{{ adminError }}</p>
+          </sc-if>
+        </div>
+      </section>
+    </sc-if>
+  </main>
+  </sc-if>
+
+  <footer style="background:#14305c;height:18px"></footer>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;apiBaseUrl&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;https://trackflow-5enb.onrender.com&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;API&quot;}}">
+const ESTADOS = {
+  REGISTERED: ['Registrado', '#e7e7ea', '#424244', 'rgba(29,31,32,.3)'],
+  AT_DISTRIBUTION_CENTER: ['En centro de distribución', '#e9f0fa', '#0e2646', '#1b4b8f'],
+  IN_TRANSIT: ['En tránsito', '#e9f0fa', '#0e2646', '#1b4b8f'],
+  OUT_FOR_DELIVERY: ['En reparto', '#fdeee1', '#7a3606', '#f4711a'],
+  DELIVERED: ['Entregado', '#e2f2e6', '#1c5130', '#2f7d4f']
+};
+const TIPOS = {
+  RECEIVED_AT_CENTER: 'Recibido en centro',
+  DISPATCHED: 'Despachado',
+  ARRIVED_AT_DESTINATION_CENTER: 'Llegó a centro destino',
+  OUT_FOR_DELIVERY: 'Salió a reparto',
+  DELIVERED: 'Entregado'
+};
+const DOC_HINTS = {
+  CC: 'CC: 6 a 10 dígitos.',
+  CE: 'CE: 6 a 10 dígitos.',
+  TI: 'TI: 10 u 11 dígitos.',
+  PP: 'PP: 5 a 15 caracteres, letras mayúsculas y dígitos.',
+  NIT: 'NIT: 9 o 10 dígitos, opcionalmente con dígito de verificación (890903938-8).'
+};
+const TN_RE = /^TF[A-Z0-9]{12}$/;
+
+class Component extends DCLogic {
+  constructor(p) {
+    super(p);
+    this.formRef = React.createRef();
+    this.evFormRef = React.createRef();
+    this.loginFormRef = React.createRef();
+    this.state = {
+      route: 'home', q: '', qError: '', opsOpen: false,
+      loading: false, notFound: false, netError: '', tracking: null,
+      events: null, eventsLoading: false,
+      diag: '',
+      token: null, roles: '',
+      remTipo: 'CC', desTipo: 'CC',
+      remCityText: '', desCityText: '', remCityId: null, desCityId: null,
+      remCities: [], desCities: [], remOpen: false, desOpen: false,
+      submitting: false, shipError: '', shipErrorTitle: '', shipMissing: [], created: null, createdEstado: '',
+      useFecha: false, evSubmitting: false, evError: '', evErrorTitle: '', evOk: null, evTnDefault: '',
+      loginSubmitting: false, loginError: '', loginErrorTitle: '',
+      adminLoading: false, adminResult: null, adminError: ''
+    };
+  }
+
+  componentWillUnmount() { document.removeEventListener('mousedown', this.onDocDown, true); }
+  componentDidMount() {
+    document.addEventListener('mousedown', this.onDocDown, true);
+    try {
+      const t = localStorage.getItem('tf_token'), r = localStorage.getItem('tf_roles');
+      if (t) this.setState({ token: t, roles: r || 'OPERADOR' });
+    } catch (e) {}
+  }
+
+  get base() { return (this.props.apiBaseUrl || 'https://trackflow-5enb.onrender.com').replace(/\/$/, ''); }
+
+  async api(path, opts) {
+    opts = opts || {};
+    const headers = { 'Accept': 'application/json' };
+    if (opts.body) headers['Content-Type'] = 'application/json';
+    if (this.state.token) headers['Authorization'] = 'Bearer ' + this.state.token;
+    const ctrl = new AbortController();
+    const ms = opts.timeout || 10000;
+    const timer = setTimeout(() => ctrl.abort(), ms);
+    let res;
+    try {
+      res = await fetch(this.base + path, {
+        method: opts.method || 'GET', headers, signal: ctrl.signal,
+        body: opts.body ? JSON.stringify(opts.body) : undefined
+      });
+    } catch (err) {
+      clearTimeout(timer);
+      if (err.name === 'AbortError') throw new Error('el servicio no respondió en ' + Math.round(ms / 1000) + 's');
+      throw err;
+    }
+    clearTimeout(timer);
+    let data = null;
+    try { data = await res.json(); } catch (e) {}
+    return { ok: res.ok, status: res.status, data };
+  }
+
+  // ── navegación ──
+  go = (route) => this.setState({ route });
+  goHome = () => this.setState({ route: 'home', qError: '' });
+  goNuevo = () => this.setState({ route: 'nuevo', opsOpen: false });
+  goEvento = () => this.setState({ route: 'evento', opsOpen: false });
+  toggleOps = () => this.setState(s => ({ opsOpen: !s.opsOpen }));
+  closeOps = () => this.setState({ opsOpen: false });
+  opsRef = React.createRef();
+  onDocDown = (e) => {
+    if (!this.state.opsOpen) return;
+    const n = this.opsRef.current;
+    if (n && !n.contains(e.target)) this.setState({ opsOpen: false });
+  };
+  goLogin = () => this.setState({ route: 'login', loginError: '' });
+  goAdmin = () => this.setState({ route: 'admin' });
+  logout = () => {
+    try { localStorage.removeItem('tf_token'); localStorage.removeItem('tf_roles'); } catch (e) {}
+    this.setState({ token: null, roles: '', route: 'home' });
+  };
+
+  // ── rastreo ──
+  doSearch = (e) => {
+    e.preventDefault();
+    const raw = (new FormData(e.target).get('tn') || '').toString().trim().toUpperCase();
+    if (!raw) return this.setState({ qError: 'Escribe un número de guía para rastrear.' });
+    if (!TN_RE.test(raw)) return this.setState({ qError: 'Ese número no tiene el formato de una guía TrackFlow: TF seguido de 12 caracteres alfanuméricos en mayúscula (ej. TFA1B2C3D4E5F6).' });
+    this.setState({ qError: '', q: raw, route: 'result' });
+    this.fetchTracking(raw);
+  };
+  retry = () => this.fetchTracking(this.state.q);
+
+  async fetchTracking(tn) {
+    this.setState({ loading: true, notFound: false, netError: '', tracking: null, events: null, eventsLoading: true, diag: '' });
+    try {
+      const r = await this.api('/api/tracking/' + tn, { timeout: 25000 });
+      this.setState({ diag: 'GET ' + this.base + '/api/tracking/' + tn + ' → ' + r.status });
+      if (r.status === 404) return this.setState({ loading: false, eventsLoading: false, notFound: true });
+      if (!r.ok) return this.setState({ loading: false, eventsLoading: false, netError: (r.data && r.data.detail) || ('El servicio respondió ' + r.status + '.') });
+      this.setState({ loading: false, tracking: r.data });
+      const ev = await this.api('/api/shipments/' + tn + '/events');
+      this.setState({ eventsLoading: false, events: ev.ok && Array.isArray(ev.data) ? ev.data : [] });
+    } catch (err) {
+      this.setState({ loading: false, eventsLoading: false, netError: 'No hay conexión con ' + this.base + ' (' + err.message + ').' });
+    }
+  }
+
+  // ── ciudades ──
+  searchCities = (which, text) => {
+    const key = which === 'rem' ? 'remCityText' : 'desCityText';
+    const idKey = which === 'rem' ? 'remCityId' : 'desCityId';
+    const openKey = which === 'rem' ? 'remOpen' : 'desOpen';
+    this.setState({ [key]: text, [idKey]: null, [openKey]: true });
+    clearTimeout(this['_ct_' + which]);
+    if (!text.trim()) return this.setState({ [which + 'Cities']: [] });
+    this['_ct_' + which] = setTimeout(async () => {
+      try {
+        const r = await this.api('/api/ciudades?q=' + encodeURIComponent(text.trim()), { timeout: 6000 });
+        this.setState({ [which + 'Cities']: Array.isArray(r.data) ? r.data : [] });
+      } catch (e) {
+        this.setState({ [which + 'Cities']: [] });
+      }
+    }, 220);
+  };
+  pickCity = (which, c) => this.setState({
+    [which + 'CityText']: c.etiqueta, [which + 'CityId']: c.id, [which + 'Open']: false
+  });
+
+  // ── registrar envío ──
+  submitShipment = async (e) => {
+    e.preventDefault();
+    const f = new FormData(this.formRef.current);
+    const v = (k) => (f.get(k) || '').toString().trim();
+    if (!this.state.remCityId || !this.state.desCityId) {
+      return this.setState({ shipErrorTitle: 'Falta la ciudad', shipError: 'Selecciona origen y destino de la lista de sugerencias: la ciudad se envía como identificador, no como texto libre.', shipMissing: [] });
+    }
+    const body = {
+      remitente: { nombreCompleto: v('rem_nombre'), tipoDocumento: this.state.remTipo, numeroDocumento: v('rem_doc'), telefono: v('rem_tel'), direccion: v('rem_dir'), ciudadId: this.state.remCityId },
+      destinatario: { nombreCompleto: v('des_nombre'), tipoDocumento: this.state.desTipo, numeroDocumento: v('des_doc'), telefono: v('des_tel'), direccion: v('des_dir'), ciudadId: this.state.desCityId },
+      descripcion: v('descripcion')
+    };
+    this.setState({ submitting: true, shipError: '', shipMissing: [] });
+    try {
+      const r = await this.api('/api/shipments', { method: 'POST', body });
+      if (r.status === 401 || r.status === 403) {
+        this.setState({ submitting: false, shipErrorTitle: 'Sesión requerida', shipError: 'Esta operación requiere rol OPERADOR. Inicia sesión y vuelve a enviar.' });
+        return;
+      }
+      if (!r.ok) {
+        const d = r.data || {};
+        const missing = Object.entries(d.camposFaltantes || {}).map(([campo, mensaje]) => ({ campo, mensaje }));
+        return this.setState({ submitting: false, shipErrorTitle: (d.title || 'Error ' + r.status), shipError: d.detail || 'La solicitud fue rechazada.', shipMissing: missing });
+      }
+      this.setState({ submitting: false, created: r.data, createdEstado: r.data.estadoProcesamiento || 'ENCOLADO' });
+      this.pollCreated(r.data.trackingNumber);
+    } catch (err) {
+      this.setState({ submitting: false, shipErrorTitle: 'Sin conexión', shipError: 'No hay conexión con ' + this.base + ' (' + err.message + ').' });
+    }
+  };
+
+  async pollCreated(tn) {
+    for (let i = 0; i < 14; i++) {
+      await new Promise(r => setTimeout(r, 300));
+      try {
+        const r = await this.api('/api/tracking/' + tn);
+        if (r.ok) return this.setState({ createdEstado: 'REGISTRADO' });
+      } catch (e) { return; }
+    }
+    this.setState({ createdEstado: 'PROCESANDO' });
+  }
+
+  verCreado = () => { const tn = this.state.created.trackingNumber; this.setState({ q: tn, route: 'result' }); this.fetchTracking(tn); };
+  otroEnvio = () => this.setState({ created: null, remCityText: '', desCityText: '', remCityId: null, desCityId: null, shipError: '' });
+
+  // ── evento ──
+  submitEvent = async (e) => {
+    e.preventDefault();
+    const f = new FormData(this.evFormRef.current);
+    const v = (k) => (f.get(k) || '').toString().trim();
+    const tn = v('ev_tn').toUpperCase();
+    if (!TN_RE.test(tn)) return this.setState({ evErrorTitle: 'Guía inválida', evError: 'El número de guía debe ser TF seguido de 12 caracteres alfanuméricos en mayúscula.', evOk: null });
+    if (!v('ev_punto')) return this.setState({ evErrorTitle: 'Falta el punto', evError: 'Indica el punto donde ocurrió el movimiento.', evOk: null });
+    const body = { tipo: v('ev_tipo'), punto: v('ev_punto') };
+    if (v('ev_obs')) body.observaciones = v('ev_obs');
+    if (this.state.useFecha && v('ev_fecha')) {
+      const d = new Date(v('ev_fecha'));
+      if (d.getTime() > Date.now()) return this.setState({ evErrorTitle: 'Fecha futura', evError: 'La fecha del movimiento no puede estar en el futuro.', evOk: null });
+      body.ocurridoEn = d.toISOString();
+    }
+    this.setState({ evSubmitting: true, evError: '', evOk: null });
+    try {
+      const r = await this.api('/api/shipments/' + tn + '/events', { method: 'POST', body });
+      if (r.status === 404) return this.setState({ evSubmitting: false, evErrorTitle: 'Envío no encontrado', evError: 'No existe un envío con la guía ' + tn + '. Verifica el número.' });
+      if (r.status === 401 || r.status === 403) return this.setState({ evSubmitting: false, evErrorTitle: 'Sesión requerida', evError: 'Esta operación requiere rol OPERADOR. Inicia sesión y vuelve a enviar.' });
+      if (!r.ok) return this.setState({ evSubmitting: false, evErrorTitle: (r.data && r.data.title) || ('Error ' + r.status), evError: (r.data && r.data.detail) || 'La solicitud fue rechazada.' });
+      this.setState({ evSubmitting: false, evOk: tn });
+    } catch (err) {
+      this.setState({ evSubmitting: false, evErrorTitle: 'Sin conexión', evError: 'No hay conexión con ' + this.base + ' (' + err.message + ').' });
+    }
+  };
+  toggleFecha = (e) => this.setState({ useFecha: e.target.checked });
+  verEvento = () => { const tn = this.state.evOk; this.setState({ q: tn, route: 'result' }); this.fetchTracking(tn); };
+
+  // ── login ──
+  submitLogin = async (e) => {
+    e.preventDefault();
+    const f = new FormData(this.loginFormRef.current);
+    const usuario = (f.get('usuario') || '').toString().trim();
+    const clave = (f.get('clave') || '').toString();
+    if (!usuario || !clave) return this.setState({ loginErrorTitle: 'Campos vacíos', loginError: 'Escribe usuario y clave.' });
+    this.setState({ loginSubmitting: true, loginError: '' });
+    try {
+      const r = await this.api('/api/auth/login', { method: 'POST', body: { usuario, clave } });
+      if (r.status === 503) return this.setState({ loginSubmitting: false, loginErrorTitle: 'Entorno sin credenciales', loginError: 'No hay credenciales configuradas en este entorno.' });
+      if (r.status === 401) return this.setState({ loginSubmitting: false, loginErrorTitle: 'Credenciales incorrectas', loginError: 'El usuario o la clave no coinciden.' });
+      if (!r.ok) return this.setState({ loginSubmitting: false, loginErrorTitle: 'Error ' + r.status, loginError: (r.data && r.data.detail) || 'No se pudo iniciar sesión.' });
+      const roles = r.data.roles || 'OPERADOR';
+      try { localStorage.setItem('tf_token', r.data.token); localStorage.setItem('tf_roles', roles); } catch (err2) {}
+      this.setState({ loginSubmitting: false, token: r.data.token, roles, route: 'nuevo' });
+    } catch (err) {
+      this.setState({ loginSubmitting: false, loginErrorTitle: 'Sin conexión', loginError: 'No hay conexión con ' + this.base + ' (' + err.message + ').' });
+    }
+  };
+
+  rebuild = async () => {
+    this.setState({ adminLoading: true, adminError: '', adminResult: null });
+    try {
+      const r = await this.api('/api/admin/reconstruir-proyecciones', { method: 'POST', body: {} });
+      if (!r.ok) return this.setState({ adminLoading: false, adminError: (r.data && r.data.detail) || ('El servicio respondió ' + r.status + '.') });
+      this.setState({ adminLoading: false, adminResult: r.data });
+    } catch (err) {
+      this.setState({ adminLoading: false, adminError: 'No hay conexión con ' + this.base + '.' });
+    }
+  };
+
+  fmt(iso) {
+    if (!iso) return '—';
+    const d = new Date(iso);
+    if (isNaN(d)) return iso;
+    return d.toLocaleString('es-CO', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+  }
+
+  renderVals() {
+    const s = this.state, t = s.tracking;
+    const est = t ? (ESTADOS[t.estado] || ESTADOS.REGISTERED) : null;
+    let maxSoFar = 0;
+    const timeline = (s.events || []).map(e => {
+      const ts = new Date(e.ocurridoEn).getTime();
+      const rezagado = ts < maxSoFar;
+      if (ts > maxSoFar) maxSoFar = ts;
+      const c = ESTADOS[e.estadoResultante] || ESTADOS.REGISTERED;
+      return {
+        id: e.id, tipoLabel: TIPOS[e.tipo] || e.tipo, punto: e.punto, obs: e.observaciones || '',
+        fecha: this.fmt(e.ocurridoEn), estadoLabel: (ESTADOS[e.estadoResultante] || [e.estadoResultante])[0],
+        rezagado,
+        dotStyle: { width: '34px', height: '34px', display: 'grid', placeItems: 'center', background: '#f2f2f3', flex: 'none', border: '1px solid ' + c[3], color: c[3] },
+        isReceived: e.tipo === 'RECEIVED_AT_CENTER', isDispatched: e.tipo === 'DISPATCHED',
+        isArrived: e.tipo === 'ARRIVED_AT_DESTINATION_CENTER', isOut: e.tipo === 'OUT_FOR_DELIVERY',
+        isDelivered: e.tipo === 'DELIVERED'
+      };
+    });
+    const c = s.created;
+    const estadoProc = s.createdEstado === 'REGISTRADO' ? 'Registrado y consultable'
+      : s.createdEstado === 'PROCESANDO' ? 'Procesando…' : 'Encolado';
+    return {
+      base: this.base,
+      isHome: s.route === 'home', notHome: s.route !== 'home',
+      isInterior: s.route !== 'home' && s.route !== 'login',
+      claveType: s.showClave ? 'text' : 'password',
+      toggleClave: () => this.setState(st => ({ showClave: !st.showClave })), isResult: s.route === 'result', isNuevo: s.route === 'nuevo',
+      isEvento: s.route === 'evento', isLogin: s.route === 'login', isAdminScreen: s.route === 'admin',
+      loggedIn: !!s.token, loggedOut: !s.token, isAdmin: !!s.token && /ADMIN/.test(s.roles),
+      rolesLabel: s.roles, needsLogin: !s.token,
+      diag: s.diag,
+      opsOpen: s.opsOpen, toggleOps: this.toggleOps, closeOps: this.closeOps, opsRef: this.opsRef,
+      goHome: this.goHome, goNuevo: this.goNuevo, goEvento: this.goEvento, goLogin: this.goLogin, goAdmin: this.goAdmin, logout: this.logout,
+      doSearch: this.doSearch, retry: this.retry, q: s.q, qError: s.qError,
+      qCount: s.q ? s.q.length + '/14' : '',
+      loading: s.loading, notFound: s.notFound, netError: s.netError,
+      hasTracking: !!t,
+      t_tn: t ? t.trackingNumber : '', t_estado: est ? est[0] : '',
+      estadoStyle: { display: 'inline-flex', alignItems: 'center', gap: '7px', padding: '5px 12px', fontSize: '12px', letterSpacing: '.06em', textTransform: 'uppercase', fontFamily: 'var(--font-heading)', background: est ? est[1] : 'transparent', color: est ? est[2] : 'inherit', border: '1px solid ' + (est ? est[3] : 'transparent') },
+      t_destino: t ? (t.ciudadDestino || '—') : '', t_registrado: t ? this.fmt(t.registeredAt) : '',
+      t_ultimoPunto: t ? (t.ultimoPunto || 'Sin movimientos') : '',
+      t_ultimoMov: t ? this.fmt(t.ultimoMovimientoAt) : '',
+      eventsLoading: s.eventsLoading, timeline,
+      noEvents: !!t && !s.eventsLoading && timeline.length === 0,
+      formRef: this.formRef, evFormRef: this.evFormRef, loginFormRef: this.loginFormRef,
+      remTipo: s.remTipo, desTipo: s.desTipo,
+      remHint: DOC_HINTS[s.remTipo], desHint: DOC_HINTS[s.desTipo],
+      onRemTipo: (e) => this.setState({ remTipo: e.target.value }),
+      onDesTipo: (e) => this.setState({ desTipo: e.target.value }),
+      onRemCity: (e) => this.searchCities('rem', e.target.value),
+      onDesCity: (e) => this.searchCities('des', e.target.value),
+      onRemFocus: () => this.setState({ remOpen: true }),
+      onDesFocus: () => this.setState({ desOpen: true }),
+      remCityText: s.remCityText, desCityText: s.desCityText,
+      remListOpen: s.remOpen && !!s.remCityText.trim() && !s.remCityId,
+      desListOpen: s.desOpen && !!s.desCityText.trim() && !s.desCityId,
+      remCities: s.remCities.map(x => ({ etiqueta: x.etiqueta, pick: () => this.pickCity('rem', x) })),
+      desCities: s.desCities.map(x => ({ etiqueta: x.etiqueta, pick: () => this.pickCity('des', x) })),
+      remNoCities: s.remCities.length === 0, desNoCities: s.desCities.length === 0,
+      submitShipment: this.submitShipment, submitting: s.submitting,
+      submitLabel: s.submitting ? 'Enviando…' : 'Registrar envío',
+      shipError: s.shipError, shipErrorTitle: s.shipErrorTitle, shipMissing: s.shipMissing,
+      showShipmentForm: !s.created, created: !!c,
+      c_tn: c ? c.trackingNumber : '', c_destinatario: c ? c.destinatario : '',
+      c_ciudad: c ? c.ciudadDestino : '', c_solicitado: c ? this.fmt(c.solicitadoEn) : '',
+      c_procesamiento: estadoProc,
+      c_nota: 'El número de guía ya es definitivo, aunque el registro siga procesándose.',
+      verCreado: this.verCreado, otroEnvio: this.otroEnvio,
+      submitEvent: this.submitEvent, evSubmitting: s.evSubmitting,
+      evSubmitLabel: s.evSubmitting ? 'Enviando…' : 'Registrar evento',
+      evError: s.evError, evErrorTitle: s.evErrorTitle, evOk: !!s.evOk, evOkTn: s.evOk || '',
+      useFecha: s.useFecha, toggleFecha: this.toggleFecha, verEvento: this.verEvento,
+      evTnDefault: s.evTnDefault || s.q,
+      submitLogin: this.submitLogin, loginSubmitting: s.loginSubmitting,
+      loginLabel: s.loginSubmitting ? 'Ingresando…' : 'Ingresar',
+      loginError: s.loginError, loginErrorTitle: s.loginErrorTitle,
+      rebuild: this.rebuild, adminLoading: s.adminLoading,
+      adminLabel: s.adminLoading ? 'Reconstruyendo…' : 'Reconstruir proyecciones',
+      adminResult: !!s.adminResult,
+      adminEnvios: s.adminResult ? s.adminResult.enviosRepublicados : '',
+      adminEventos: s.adminResult ? s.adminResult.eventosRepublicados : '',
+      adminError: s.adminError
+    };
+  }
+}
+
+</script>
+</body>
+</html>
