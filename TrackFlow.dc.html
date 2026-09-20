@@ -624,7 +624,7 @@ class Component extends DCLogic {
   async fetchTracking(tn) {
     this.setState({ loading: true, notFound: false, netError: '', tracking: null, events: null, eventsLoading: true, diag: '' });
     try {
-      const r = await this.api('/api/tracking/' + tn, { timeout: 25000 });
+      const r = await this.api('/api/tracking/' + tn, { timeout: 60000 });
       this.setState({ diag: 'GET ' + this.base + '/api/tracking/' + tn + ' → ' + r.status });
       if (r.status === 404) return this.setState({ loading: false, eventsLoading: false, notFound: true });
       if (!r.ok) return this.setState({ loading: false, eventsLoading: false, netError: (r.data && r.data.detail) || ('El servicio respondió ' + r.status + '.') });
